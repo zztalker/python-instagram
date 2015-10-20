@@ -126,7 +126,7 @@ def bind_method(**config):
             if response['status'] == '503' or response['status'] == '429':
                 raise InstagramAPIError(response['status'], "Rate limited", "Your client is making too many request per second")
             if hasattr(content, "decode"):
-                content = content.decode()
+                content = content.decode('utf-8')
             try:
                 content_obj = simplejson.loads(content)
             except ValueError:
