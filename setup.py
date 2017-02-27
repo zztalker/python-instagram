@@ -2,8 +2,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="python-instagram",
-    version="1.3.2",
+    name="instagram",
+    version="1.3",
     description="Instagram API client",
     license="MIT",
     install_requires=[
@@ -12,9 +12,9 @@ setup(
         "six",
         "pytz",
     ],
-    author="Instagram, Inc",
-    author_email="apidevelopers@instagram.com",
-    url="http://github.com/Instagram/python-instagram",
+    author="instagram, wkoot",
+    author_email="pypi@rondarchief.nl",
+    url="http://github.com/wkoot/python-instagram",
     packages=find_packages(),
     keywords="instagram",
     zip_safe=True
