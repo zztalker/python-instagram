@@ -232,9 +232,8 @@ class OAuth2Request(object):
             if method == "POST":
                 body = self._post_body(params)
                 headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-                url = self._full_url_with_params(path, params, include_secret)
-            else:
-                url = self._full_url_with_params(path, params, include_secret)
+
+            url = self._full_url_with_params(path, params, include_secret)
         else:
             body, headers = self._encode_multipart(params, params['files'])
             url = self._full_url(path)
