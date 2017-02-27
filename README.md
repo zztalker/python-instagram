@@ -4,7 +4,7 @@
 
 - - - 
 
-[![Build Status](https://api.travis-ci.org/Instagram/python-instagram.svg)](https://travis-ci.org/Instagram/python-instagram)
+[![Build Status](https://api.travis-ci.org/wkoot/python-instagram.svg)](https://travis-ci.org/wkoot/python-instagram)
 
 python-instagram
 ======
