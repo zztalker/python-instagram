@@ -91,7 +91,7 @@ class Media(ApiModel):
                 new_media.comments.append(Comment.object_from_dictionary(comment))
 
         new_media.users_in_photo = []
-        for user_in_photo in entry.get('users_in_photo', []):
+        for user_in_photo in entry.get('users_in_photo') or []:
             new_media.users_in_photo.append(UserInPhoto.object_from_dictionary(user_in_photo))
 
         new_media.created_time = timestamp_to_datetime(entry['created_time'])
