@@ -64,9 +64,11 @@ class TestInstagramAPI(client.InstagramAPI):
         return actual_val
 
 
-@unittest.skipUnless(TEST_AUTH, 'Skipping InstagramAuthTests')
 class InstagramAuthTests(unittest.TestCase):
     def setUp(self):
+        if not TEST_AUTH:
+            raise unittest.SkipTest()
+
         self.unauthenticated_api = TestInstagramAPI(client_id=client_id, redirect_uri=redirect_uri, client_secret=client_secret)
 
     def test_authorize_login_url(self):
@@ -253,4 +255,7 @@ class InstagramHelperTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    if not TEST_AUTH:
+        del InstagramAuthTests
+
     unittest.main()
