@@ -68,25 +68,28 @@ class Media(ApiModel):
         new_media.user = User.object_from_dictionary(entry['user'])
 
         new_media.images = {}
-        for version, version_info in six.iteritems(entry['images']):
-            new_media.images[version] = Image.object_from_dictionary(version_info)
+        if entry.get('images'):
+            for version, version_info in six.iteritems(entry['images']):
+                new_media.images[version] = Image.object_from_dictionary(version_info)
 
-        if new_media.type == 'video':
+        if new_media.type == 'video' and entry.get('videos'):
             new_media.videos = {}
             for version, version_info in six.iteritems(entry['videos']):
                 new_media.videos[version] = Video.object_from_dictionary(version_info)
 
-        if 'user_has_liked' in entry:
+        if entry.get('user_has_liked'):
             new_media.user_has_liked = entry['user_has_liked']
-        new_media.like_count = entry['likes']['count']
+
+        new_media.like_count = entry.get('likes', {}).get('count', 0)
         new_media.likes = []
-        if 'data' in entry['likes']:
-            for like in entry['likes']['data']:
-                new_media.likes.append(User.object_from_dictionary(like))
+        if new_media.like_count:
+            if entry.get('likes', {}).get('data'):
+                for like in entry['likes']['data']:
+                    new_media.likes.append(User.object_from_dictionary(like))
 
         new_media.comment_count = entry.get('comments', {}).get('count', 0)
+        new_media.comments = []
         if new_media.comment_count:
-            new_media.comments = []
             if entry.get('comments', {}).get('data'):
                 for comment in entry['comments']['data']:
                     new_media.comments.append(Comment.object_from_dictionary(comment))
@@ -98,15 +101,15 @@ class Media(ApiModel):
 
         new_media.created_time = timestamp_to_datetime(entry['created_time'])
 
-        if entry['location'] and 'id' in entry:
+        if entry.get('location') and entry.get('id'):
             new_media.location = Location.object_from_dictionary(entry['location'])
 
         new_media.caption = None
-        if entry['caption']:
+        if entry.get('caption'):
             new_media.caption = Comment.object_from_dictionary(entry['caption'])
 
         new_media.tags = []
-        if entry['tags']:
+        if entry.get('tags'):
             for tag in entry['tags']:
                 new_media.tags.append(Tag.object_from_dictionary({'name': tag}))
 
