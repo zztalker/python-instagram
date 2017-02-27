@@ -3,21 +3,17 @@ import six
 
 
 class ApiModel(object):
-
     @classmethod
     def object_from_dictionary(cls, entry):
         # make dict keys all strings
         if entry is None:
             return ""
+
         entry_str_dict = dict([(str(key), value) for key, value in entry.items()])
         return cls(**entry_str_dict)
 
     def __repr__(self):
         return str(self)
-        # if six.PY2:
-        #     return six.text_type(self).encode('utf8')
-        # else:
-        #     return self.encode('utf8')
 
     def __str__(self):
         if six.PY3:
@@ -27,7 +23,6 @@ class ApiModel(object):
 
 
 class Image(ApiModel):
-
     def __init__(self, url, width, height):
         self.url = url
         self.height = height
@@ -38,13 +33,11 @@ class Image(ApiModel):
 
 
 class Video(Image):
-
     def __unicode__(self):
         return "Video: %s" % self.url
 
 
 class Media(ApiModel):
-
     def __init__(self, id=None, **kwargs):
         self.id = id
         for key, value in six.iteritems(kwargs):
@@ -62,10 +55,8 @@ class Media(ApiModel):
         else:
             return self.videos['low_resolution'].url
 
-
     def get_thumbnail_url(self):
         return self.images['thumbnail'].url
-
 
     def __unicode__(self):
         return "Media: %s" % self.id
@@ -74,29 +65,31 @@ class Media(ApiModel):
     def object_from_dictionary(cls, entry):
         new_media = Media(id=entry['id'])
         new_media.type = entry['type']
-
         new_media.user = User.object_from_dictionary(entry['user'])
 
         new_media.images = {}
-        for version, version_info in six.iteritems(entry['images']):
-            new_media.images[version] = Image.object_from_dictionary(version_info)
+        if entry.get('images'):
+            for version, version_info in six.iteritems(entry['images']):
+                new_media.images[version] = Image.object_from_dictionary(version_info)
 
-        if new_media.type == 'video':
+        if new_media.type == 'video' and entry.get('videos'):
             new_media.videos = {}
             for version, version_info in six.iteritems(entry['videos']):
                 new_media.videos[version] = Video.object_from_dictionary(version_info)
 
-        if 'user_has_liked' in entry:
+        if entry.get('user_has_liked'):
             new_media.user_has_liked = entry['user_has_liked']
-        new_media.like_count = entry['likes']['count']
+
+        new_media.like_count = entry.get('likes', {}).get('count', 0)
         new_media.likes = []
-        if 'data' in entry['likes']:
-            for like in entry['likes']['data']:
-                new_media.likes.append(User.object_from_dictionary(like))
+        if new_media.like_count:
+            if entry.get('likes', {}).get('data'):
+                for like in entry['likes']['data']:
+                    new_media.likes.append(User.object_from_dictionary(like))
 
         new_media.comment_count = entry.get('comments', {}).get('count', 0)
+        new_media.comments = []
         if new_media.comment_count:
-            new_media.comments = []
             if entry.get('comments', {}).get('data'):
                 for comment in entry['comments']['data']:
                     new_media.comments.append(Comment.object_from_dictionary(comment))
@@ -108,27 +101,25 @@ class Media(ApiModel):
 
         new_media.created_time = timestamp_to_datetime(entry['created_time'])
 
-        if entry['location'] and 'id' in entry:
+        if entry.get('location') and entry.get('id'):
             new_media.location = Location.object_from_dictionary(entry['location'])
 
         new_media.caption = None
-        if entry['caption']:
+        if entry.get('caption'):
             new_media.caption = Comment.object_from_dictionary(entry['caption'])
-        
+
         new_media.tags = []
-        if entry['tags']:
+        if entry.get('tags'):
             for tag in entry['tags']:
                 new_media.tags.append(Tag.object_from_dictionary({'name': tag}))
 
         new_media.link = entry['link']
-
         new_media.filter = entry.get('filter')
 
         return new_media
 
 
 class MediaShortcode(Media):
-
     def __init__(self, shortcode=None, **kwargs):
         self.shortcode = shortcode
         for key, value in six.iteritems(kwargs):
@@ -181,11 +172,9 @@ class Location(ApiModel):
     def object_from_dictionary(cls, entry):
         point = None
         if 'latitude' in entry:
-            point = Point(entry.get('latitude'),
-                          entry.get('longitude'))
-        location = Location(entry.get('id', 0),
-                       point=point,
-                       name=entry.get('name', ''))
+            point = Point(entry.get('latitude'), entry.get('longitude'))
+
+        location = Location(entry.get('id', 0), point=point, name=entry.get('name', ''))
         return location
 
     def __unicode__(self):
@@ -193,7 +182,6 @@ class Location(ApiModel):
 
 
 class User(ApiModel):
-
     def __init__(self, id, *args, **kwargs):
         self.id = id
         for key, value in six.iteritems(kwargs):
@@ -204,7 +192,6 @@ class User(ApiModel):
 
 
 class Relationship(ApiModel):
-
     def __init__(self, incoming_status="none", outgoing_status="none", target_user_is_private=False):
         self.incoming_status = incoming_status
         self.outgoing_status = outgoing_status
