@@ -3,4 +3,5 @@
 *.swp
 test_settings.py
 dist
+build
 *.egg-info
