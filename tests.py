@@ -247,7 +247,7 @@ class InstagramHelperTests(unittest.TestCase):
 
     def test_timestamp_to_datetime(self):
         date_time = timestamp_to_datetime(float(self.timestamp))
-        self.assertIsNotNone(date_time.tzinfo)
+        self.assertTrue(date_time.tzinfo is not None)
         self.assertEqual(date_time.tzinfo, pytz.UTC)
 
 
