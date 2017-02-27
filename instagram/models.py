@@ -68,36 +68,31 @@ class Media(ApiModel):
         new_media.user = User.object_from_dictionary(entry['user'])
 
         new_media.images = {}
-        if entry.get('images'):
-            for version, version_info in six.iteritems(entry['images']):
-                new_media.images[version] = Image.object_from_dictionary(version_info)
+        for version, version_info in six.iteritems(entry.get('images', {})):
+            new_media.images[version] = Image.object_from_dictionary(version_info)
 
-        if new_media.type == 'video' and entry.get('videos'):
+        if new_media.type == 'video':
             new_media.videos = {}
-            for version, version_info in six.iteritems(entry['videos']):
+            for version, version_info in six.iteritems(entry.get('videos', {})):
                 new_media.videos[version] = Video.object_from_dictionary(version_info)
 
-        if entry.get('user_has_liked'):
-            new_media.user_has_liked = entry['user_has_liked']
+        new_media.user_has_liked = entry.get('user_has_liked', False)
 
         new_media.like_count = entry.get('likes', {}).get('count', 0)
         new_media.likes = []
         if new_media.like_count:
-            if entry.get('likes', {}).get('data'):
-                for like in entry['likes']['data']:
-                    new_media.likes.append(User.object_from_dictionary(like))
+            for like in entry.get('likes', {}).get('data', []):
+                new_media.likes.append(User.object_from_dictionary(like))
 
         new_media.comment_count = entry.get('comments', {}).get('count', 0)
         new_media.comments = []
         if new_media.comment_count:
-            if entry.get('comments', {}).get('data'):
-                for comment in entry['comments']['data']:
-                    new_media.comments.append(Comment.object_from_dictionary(comment))
+            for comment in entry.get('comments', {}).get('data', []):
+                new_media.comments.append(Comment.object_from_dictionary(comment))
 
         new_media.users_in_photo = []
-        if entry.get('users_in_photo'):
-            for user_in_photo in entry['users_in_photo']:
-                new_media.users_in_photo.append(UserInPhoto.object_from_dictionary(user_in_photo))
+        for user_in_photo in entry.get('users_in_photo', []):
+            new_media.users_in_photo.append(UserInPhoto.object_from_dictionary(user_in_photo))
 
         new_media.created_time = timestamp_to_datetime(entry['created_time'])
 
@@ -109,9 +104,8 @@ class Media(ApiModel):
             new_media.caption = Comment.object_from_dictionary(entry['caption'])
 
         new_media.tags = []
-        if entry.get('tags'):
-            for tag in entry['tags']:
-                new_media.tags.append(Tag.object_from_dictionary({'name': tag}))
+        for tag in entry.get('tags', []):
+            new_media.tags.append(Tag.object_from_dictionary({'name': tag}))
 
         new_media.link = entry['link']
         new_media.filter = entry.get('filter')
