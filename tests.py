@@ -253,4 +253,7 @@ class InstagramHelperTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    if not TEST_AUTH:
+        del InstagramAuthTests
+
     unittest.main()
