@@ -189,7 +189,7 @@ class InstagramAPITests(unittest.TestCase):
         self.api.user_search('mikeyk', 10)
 
     def test_user_follows(self):
-        for page in self.api.user_followed_by(as_generator=True):
+        for page in self.api.user_follows(as_generator=True):
             str(page)
 
     def test_user_followed_by(self):
@@ -224,12 +224,6 @@ class InstagramAPITests(unittest.TestCase):
 
     def test_tag(self):
         self.api.tag("coffee")
-
-    def test_user_follows(self):
-        self.api.user_follows()
-
-    def test_user_requested_by(self):
-        self.api.user_followed_by()
 
     def test_user_incoming_requests(self):
         self.api.user_incoming_requests()
