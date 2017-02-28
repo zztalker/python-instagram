@@ -8,6 +8,40 @@ SEARCH_ACCEPT_PARAMETERS = ["q", "count"]
 SUPPORTED_FORMATS = ['json']
 
 
+def _make_relationship_shortcut(action):
+    def _inner(api, *args, **kwargs):
+        return api.change_user_relationship(user_id=kwargs.get("user_id"), action=action)
+
+    return _inner
+
+
+def _make_subscription_action(method, include=None, exclude=None):
+    accepts_parameters = ["object",
+                          "aspect",
+                          "object_id",  # Optional if subscribing to all users
+                          "callback_url",
+                          "lat",  # Geography
+                          "lng",  # Geography
+                          "radius",  # Geography
+                          "verify_token"]
+
+    if include:
+        accepts_parameters.extend(include)
+    if exclude:
+        accepts_parameters = [x for x in accepts_parameters if x not in exclude]
+
+    signature = False if method == 'GET' else True
+
+    return bind_method(
+        path="/subscriptions",
+        method=method,
+        accepts_parameters=accepts_parameters,
+        include_secret=True,
+        objectify_response=False,
+        signature=signature,
+    )
+
+
 class InstagramAPI(oauth2.OAuth2API):
     host = "api.instagram.com"
     base_path = "/v1"
@@ -196,12 +230,6 @@ class InstagramAPI(oauth2.OAuth2API):
         requires_target_user=True,
         response_type="entry")
 
-    def _make_relationship_shortcut(action):
-        def _inner(self, *args, **kwargs):
-            return self.change_user_relationship(user_id=kwargs.get("user_id"), action=action)
-
-        return _inner
-
     follow_user = _make_relationship_shortcut('follow')
     unfollow_user = _make_relationship_shortcut('unfollow')
     block_user = _make_relationship_shortcut('block')
@@ -209,32 +237,6 @@ class InstagramAPI(oauth2.OAuth2API):
     approve_user_request = _make_relationship_shortcut('approve')
     ignore_user_request = _make_relationship_shortcut('ignore')
 
-    def _make_subscription_action(method, include=None, exclude=None):
-        accepts_parameters = ["object",
-                              "aspect",
-                              "object_id",  # Optional if subscribing to all users
-                              "callback_url",
-                              "lat",  # Geography
-                              "lng",  # Geography
-                              "radius",  # Geography
-                              "verify_token"]
-
-        if include:
-            accepts_parameters.extend(include)
-        if exclude:
-            accepts_parameters = [x for x in accepts_parameters if x not in exclude]
-
-        signature = False if method == 'GET' else True
-
-        return bind_method(
-            path="/subscriptions",
-            method=method,
-            accepts_parameters=accepts_parameters,
-            include_secret=True,
-            objectify_response=False,
-            signature=signature,
-        )
-
     create_subscription = _make_subscription_action('POST')
     list_subscriptions = _make_subscription_action('GET')
-    delete_subscriptions = _make_subscription_action('DELETE', exclude=['object_id'], include=['id'])
+    delete_subscriptions = _make_subscription_action('DELETE', include=['id'], exclude=['object_id'])
