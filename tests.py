@@ -95,6 +95,16 @@ class InstagramAuthTests(unittest.TestCase):
         assert access_token
 
 
+class OAuth2RequestTests(unittest.TestCase):
+    def setUp(self):
+        super(OAuth2RequestTests, self).setUp()
+        self.api = TestInstagramAPI(access_token=access_token)
+        self.request = oauth2.OAuth2Request(self.api)
+
+    def test_generate_sig(self):
+        self.request._generate_sig(endpoint='/', params=dict(count=1), secret=client_secret)
+
+
 class InstagramAPITests(unittest.TestCase):
     def setUp(self):
         super(InstagramAPITests, self).setUp()
