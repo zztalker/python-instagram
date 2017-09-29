@@ -135,8 +135,8 @@ class OAuth2Request(object):
         def enc_if_str(p):
             return p.encode('utf-8') if isinstance(p, six.text_type) else p
 
-        p = ''.join('|{}={}'.format(k, enc_if_str(params[k])) for k in sorted(params.keys()))
-        sig = '{}{}'.format(endpoint, p)
+        path = ''.join('|{key}={val}'.format(key=key, val=enc_if_str(params[key])) for key in sorted(params.keys()))
+        sig = '{endpoint}{path}'.format(endpoint=endpoint, path=path)
         return hmac.new(secret.encode(), sig.encode(), sha256).hexdigest()
 
     def url_for_get(self, path, parameters):
