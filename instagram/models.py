@@ -23,10 +23,13 @@ class ApiModel(object):
 
 
 class Image(ApiModel):
-    def __init__(self, url, width, height):
+    def __init__(self, url, width, height, id=None):
         self.url = url
         self.height = height
         self.width = width
+
+        if id:  # don't store ids None and 0, just provide support for what seems to be an upcoming API change
+            self.id = id
 
     def __unicode__(self):
         return "Image: %s" % self.url
