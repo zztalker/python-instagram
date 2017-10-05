@@ -5,6 +5,7 @@
 - - - 
 
 [![Build Status](https://api.travis-ci.org/wkoot/python-instagram.svg)](https://travis-ci.org/wkoot/python-instagram)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6dd0431b8752421d95521ea59fc6ecc1)](https://www.codacy.com/app/wkoot/python-instagram)
 
 
 python-instagram
