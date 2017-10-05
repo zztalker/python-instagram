@@ -16,5 +16,5 @@ script:
   - "coverage run tests.py"
   - "coverage xml -o coverage.xml"
   - "if [[ $TRAVIS_PYTHON_VERSION != 2.6 ]]; then
-         python-codacy-coverage -r coverage.xml
+         python-codacy-coverage -r coverage.xml;
      fi"
