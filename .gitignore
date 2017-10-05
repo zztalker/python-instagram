@@ -5,3 +5,5 @@ test_settings.py
 dist
 build
 *.egg-info
+.coverage
+coverage.xml
