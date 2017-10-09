@@ -6,6 +6,7 @@
 
 [![Build Status](https://api.travis-ci.org/wkoot/python-instagram.svg)](https://travis-ci.org/wkoot/python-instagram)
 [![Code Coverage](https://api.codacy.com/project/badge/coverage/6dd0431b8752421d95521ea59fc6ecc1)](https://www.codacy.com/app/wkoot/python-instagram)
+[![Coverage Status](https://coveralls.io/repos/github/wkoot/python-instagram/badge.svg)](https://coveralls.io/github/wkoot/python-instagram)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6dd0431b8752421d95521ea59fc6ecc1)](https://www.codacy.com/app/wkoot/python-instagram)
 
 
