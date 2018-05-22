@@ -108,7 +108,12 @@ class OAuth2AuthExchangeRequest(object):
         if response['status'] != '200':
             raise OAuth2AuthExchangeError("The server returned a non-200 response for URL {url}".format(url))
 
-        redirected_to = response['Content-Location']
+        if 'Content-Location' in response:
+            redirected_to = response['Content-Location']
+        elif 'content-location' in response:
+            redirected_to = response['content-location']
+        else:
+            redirected_to = 'some_thing_go_wrong_url'
         return redirected_to
 
     def exchange_for_access_token(self, code=None, username=None, password=None, scope=None, user_id=None):
